@@ -2,10 +2,16 @@ module github.com/cravs/go-quiz-storage-server
 
 go 1.17
 
-require github.com/labstack/echo v3.3.10+incompatible
+require (
+	github.com/joho/godotenv v1.5.1
+	github.com/labstack/echo v3.3.10+incompatible
+	gorm.io/driver/mysql v1.4.7
+	gorm.io/driver/sqlite v1.4.4
+)
 
 require (
-	github.com/mattn/go-sqlite3 v1.14.16 // indirect
+	github.com/go-sql-driver/mysql v1.7.0 // indirect
+	github.com/mattn/go-sqlite3 v1.14.15 // indirect
 	github.com/stretchr/testify v1.8.1 // indirect
 )
 
@@ -22,6 +28,5 @@ require (
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
-	gorm.io/driver/sqlite v1.4.4
 	gorm.io/gorm v1.24.6
 )

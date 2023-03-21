@@ -1,11 +1,16 @@
 package main
 
 import (
+	"log"
 	"net/http"
+	"os"
 	"strconv"
+
+	"github.com/joho/godotenv"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -14,19 +19,42 @@ var (
 	db *gorm.DB
 )
 
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Printf("No .env file found")
+	}
+}
+
 func main() {
 	// DB init
 	var err error
-	db, err = gorm.Open(sqlite.Open("quiz.sqlite"), &gorm.Config{})
+	configDatabaseDriver, existsDriver := os.LookupEnv("DATABASE_DRIVER")
+	configDatabaseDSN, existsDSN := os.LookupEnv("DATABASE_DSN")
+	if !existsDriver || !existsDSN {
+		panic("Config: DSN is not set")
+	}
+
+	if configDatabaseDriver == "sqlite" {
+		db, err = gorm.Open(sqlite.Open(configDatabaseDSN), &gorm.Config{})
+	} else if configDatabaseDriver == "mysql" {
+		db, err = gorm.Open(mysql.Open(configDatabaseDSN), &gorm.Config{})
+	} else {
+		panic("Config: Database driver is not set")
+	}
+
 	if err != nil {
 		panic("failed to connect database")
 	}
 
-	// Migrate the schema
-	/*	db.AutoMigrate(&Locale{})
+	// Auto-migrate
+	configDatabaseMigration, exists := os.LookupEnv("DATABASE_MIGRATE")
+	if exists && configDatabaseMigration == "true" {
+		log.Printf("Config: Auto-migrate is enabled")
+		db.AutoMigrate(&Locale{})
 		db.AutoMigrate(&Category{})
 		db.AutoMigrate(&Question{})
-		db.AutoMigrate(&Answer{})*/
+		db.AutoMigrate(&Answer{})
+	}
 
 	// Echo init
 	e := echo.New()
