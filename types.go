@@ -8,9 +8,9 @@ import (
 type Question struct {
 	ID         uint           `json:"id" gorm:"primaryKey,autoIncrement"`
 	CategoryID int            `json:"category_id" form:"category_id"`
-	Category   Category       `json:"-" form:"category"`
+	Category   Category       `json:"-"`
 	TypeID     int            `json:"type_id" form:"type_id" gorm:"index"`
-	Text       string         `json:"question" form:"question"`
+	Text       string         `json:"text" form:"text"`
 	MediaType  int            `json:"media_type" form:"media_type"`
 	MediaUrl   string         `json:"media_url" form:"media_url"`
 	LocaleCode string         `json:"locale_code" form:"locale_code"`
